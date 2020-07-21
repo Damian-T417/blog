@@ -1,0 +1,65 @@
+{%extends 'base_dashboard.html' %}
+
+{% block content %}
+
+  <h1> Centro de control </h1>
+
+  <a href="{% url 'blog:home' %}" class="btn btn-lg btn-primary">Ir al sitio</a>
+  <br>
+
+  <h2>Todos las publicaciones creadas:  {{ total_post }}</h2>
+  <a href="" class="btn btn-success">Ver publicaciones</a>
+  <h2>Todos las etiquetas creadas:  {{ total_tag }}</h2>
+  <a href="{% url 'dashboard:tags' %}" class="btn btn-success">Ver etiquetas</a>
+
+  <h2>Obtener respuesta del servidor</h2>
+  <button class="btn btn-primary" onclick=" getAction() "> Obtener respuesta </button>
+  <br>
+  <!--<i class="fas fa-spinner fa-pulse"></i>-->
+
+  <div id="contentPost"></div>
+
+  {% block js %}
+
+  <script>
+
+    function getAction() {
+
+      $("#contentPost").empty();
+      $('#contentPost').html('<div>Espere un momento... <i class="fas fa-spinner fa-pulse"></i></div>');
+
+        var req = $.ajax({
+          method: "GET",
+          url: "{% url 'dashboard:get_action' %}",
+        });
+
+      req.done(function(data){
+        $("#contentPost").empty();
+        if (data.to_json.ajax_response === false){
+          alert("Ha ocurrido un error al conectarse al servidor")
+        }else{
+
+          //alert("Respuesta recibida");
+          var get_data = data.user_list;
+          for(var i = 0; i < get_data.length; i++) {
+
+          $("#contentPost").append(`
+            <div class="row">
+              <div class="col-12">`+get_data[i].id+`</div>
+                </div>
+              <div class="row mb-5">
+                <div class="col-8">`+get_data[i].title+`</div>
+                <div class="col-4">`+get_data[i].content+`</div>
+                </div>
+                `);
+              }
+            }
+      });
+      req.fail(function(jqXHR, textStatus){
+        alert("Error de conexión")
+      });
+    }
+  </script>
+  {% endblock %}
+
+{% endblock %}

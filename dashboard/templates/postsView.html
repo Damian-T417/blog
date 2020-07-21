@@ -1,0 +1,101 @@
+{%extends 'base_dashboard.html' %}
+{% load static %}
+{% block content %}
+
+<div class="row">
+  <div class="col-10"><h2>Publicaciones creadas</h2></div>
+  <div class="col-2"><a href="{% url 'dashboard:new_post' %}" class="btn btn-success">Agregar Post</a></div>
+</div>
+
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary"></h6>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        {% if object_list|length >= 1 %}
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Imagen</th>
+            <th>Titulo</th>
+            <th>Contenido</th>
+            <th>Etiquetas</th>
+            <th>Opciones</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for object in object_list %}
+          <tr>
+            <td>{{ object.id }}</td>
+            <td><a href="{% url 'dashboard:edit_post' id=object.id %}">{{ object.image_preview }}</a></td>
+            <td><a href="{% url 'dashboard:edit_post' id=object.id %}">{{ object.title }}</a></td>
+            <td>{{ object.short_content }}</td>
+            <td>{{ object.get_tags }}</td>
+            {% if object.draft != True %}
+            <td><a href="{% url 'blog:single_post' slug=object.slug %}" class="btn btn-primary">Ver en el sitio</a></td>
+            {% else %}
+            <td><a href="#" class="btn btn-secondary disabled" >Ver en el sitio</a><br><small>Borrador</small></td>
+            {% endif %}
+
+            {# <form id="id_delete_post" action="{% url 'dashboard:delete_post' id=object.id %}" method="POST"> #}
+
+            <form id="id_delete_post" data-post-url="{% url 'dashboard:delete_post' id=object.id %}" method="POST">
+              {% csrf_token %}
+              <td><input type="submit" class="btn btn-danger" value="Borrar"></td>
+            </form>
+          </tr>
+          {% endfor %}
+        </tbody>
+        
+        {% else %}
+        
+        <thead>
+          <tr>{{ title }}</tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>No se han encontrado registros</td>
+          </tr>
+        </tbody>
+        
+        {% endif %}
+        
+      </table>
+    </div>
+  </div>
+</div>
+
+{% include 'includes/pagination.html' %}
+
+{% block js %}
+
+<script>
+  $(function() {
+    'use estrict';
+
+    $('#id_delete_post').on('submit', function() {
+
+      $.ajax({
+        url : "{% url 'dashboard:delete_post'  %}",
+        method : "POST",
+        data: "id=object.id",
+        processData: false,
+        contentType: false,
+        success:function(response){
+          var message = response.content.message;
+          alert(message);
+        },
+
+      })
+      //alert("ENVIADO");
+      return false;
+    });
+  });
+</script>
+
+{% endblock %}
+
+{% endblock %}

@@ -1,0 +1,55 @@
+{%extends 'base_dashboard.html' %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-3"></div>
+
+  <div class="col-6">
+    {% if message %}
+    <div class="alert alert-success" role="alert">
+      <h4 class="alert-heading">Todo correcto!</h4>
+      <p>{{ message }}</p>
+      <hr>
+      {% if 'etiqueta' in message %}
+      <p class="mb-0">Pulsa <a href="{% url 'dashboard:tags' %}">aqui para regresar</a></p>
+      {% elif 'publicación' in message %}
+      <p class="mb-0">Pulsa <a href="{% url 'dashboard:posts' %}">aqui para regresar</a></p>
+      {% else %}
+      <p class="mb-0">Al parecer hubo un error al generar el link de regreso</a></p>
+      {% endif %}
+    </div>
+    {% else %}
+
+    <h2>{{ title }}</h2>
+    <br>
+    <form id="Form" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% for field in form %}
+
+      <div class="form-group">
+      <label for="">{{ field.label }}</label>
+      {{ field }}
+      </div>
+      {% endfor %}
+
+      <div class="form-group">
+
+        {% if 'etiqueta' in title %}
+        <a class="btn btn-danger" href="{% url 'dashboard:tags' %}">Cancelar</a>
+        {% elif 'publicación' in title %}
+        <a class="btn btn-danger" href="{% url 'dashboard:posts' %}">Cancelar</a>
+        {% else %}
+        <p class="mb-0">Al parecer hubo un error</a></p>
+        {% endif %}
+
+        <button type="submit" class="btn btn-success">Guardar</button>
+      </div>
+    </form>
+    {% endif %}
+  </div>
+
+  <div class="col-3"></div>
+</div>
+
+{% endblock %}

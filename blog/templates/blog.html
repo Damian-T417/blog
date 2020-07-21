@@ -1,0 +1,76 @@
+{%extends 'base.html' %}
+
+{% block content %}
+
+<h1 class="my-4">Blog:
+
+  {% if not query %}
+  <small>Posts recientes</small>
+  {% else %}
+  <small>{{title}}</small>
+  {% endif %}
+
+</h1>
+
+{% if slug %}
+
+{% for object in tags %}
+
+<div class="container">
+  <div class="card mb-4">
+    <img class="card-img-top" src="{{ object.image.url }}" alt="No existe la imagen">
+    <div class="card-body">
+      <h2 class="card-title">{{ object.title }}</h2>
+      <p class="card-text">{{ object.short_content }}</p>
+      <a href="{% url 'blog:single_post' slug=object.slug %}" class="btn btn-primary">Leer más</a>
+    </div>
+    <div class="card-footer text-muted">
+      Publicado el {{object.publish_date}}
+    </div>
+  </div>
+</div>
+
+{% endfor %} 
+
+{% elif object_list|length >= 1 %}
+{% for object in object_list %}
+<div class="container">
+  <div class="card mb-4">
+    <img class="card-img-top" src="{{ object.image.url }}" alt="No existe la imagen">
+    <div class="card-body">
+      <h2 class="card-title">{{ object.title }}</h2>
+      <p class="card-text">{{ object.short_content }}</p>
+      <a href="{% url 'blog:single_post' slug=object.slug %}" class="btn btn-primary">Leer más</a>
+    </div>
+    <div class="card-footer text-muted">
+      Publicado el {{object.publish_date}}
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+{% elif object_list|length == 0 and query %}
+  <div class="container">
+    <h3><strong>No existen resultados para lo que buscas</strong></h3>
+    <h4><small>Intenta de nuevo</small></h4>
+    <p>
+      <a class="fs-20 font-lato" href=" {% url 'blog:home' %} ">
+        <i class="glyphicon glyphicon-menu-left mr-10 fs-16"> 
+          Volver a Inicio 
+        </i>
+      </a>
+      <br>
+    </p>
+  </div>
+
+{% elif object_list|length == 0 %}
+<div class="container">
+  <h3><strong>No existen publicaciones</strong></h3>
+  <h4><small>Espera a que publiquen algo nuevo</small></h4>
+</div>
+
+{% endif %}
+
+{% include 'includes/pagination.html' %}
+
+{% endblock %}

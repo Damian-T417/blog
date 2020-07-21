@@ -1,0 +1,30 @@
+<nav aria-label="Page navigation example">
+  <div class="container">
+    <ul class="pagination">
+    {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="./?page={{ page_obj.previous_page_number }}">Pag. Anterior</a></li>
+    {% else %}
+        <li class="disabled page-item"><a class="page-link">Pag. Anterior</a></li>
+    {% endif %}
+
+    {% for num in page_obj.page_range %}
+      <li {% if num == page_obj.number %}class="active page-item"{% endif %}>
+      {% if not num %}<li class="disabled page-item"><a class="page-link">...</a>
+      {% else %}
+        {% if num == page_obj.number %}
+        <a class="page-link">{{ num }}</a>
+        {% else %}
+        <a class="page-link" href="./?page={{ num }}">{{ num }}</a>
+        {% endif %}
+      {% endif %}
+      </li>
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="./?page={{ page_obj.next_page_number }}">Pag. siguiente</a></li></li>
+    {% else %}
+        <li class="disabled page-item"><a class="page-link">Pag. siguiente</a></li>
+    {% endif %}
+    </ul>
+  </div>
+</nav>
